@@ -3,6 +3,9 @@ using System.Globalization;
 using CsvHelper;
 using VideoGameApi.Models;
 
+
+
+
 public class GameContext : IGameContext
 {
     private readonly string _filepath = "data/Videoames.csv";
@@ -10,7 +13,7 @@ public class GameContext : IGameContext
     {
         using var reader = new StreamReader(_filepath);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-        return csv.GetRecord<Game>().ToList();
+        return csv.GetRecords<Game>().ToList();
     }
     public Game? GetById(int id)
     {
@@ -20,6 +23,13 @@ public class GameContext : IGameContext
     {
         var games = GetAll();
         game.Id = games.Max(g => g.Id) + 1;
+        games.Add(game);
+        WriteToFile(games);
+    }
+    public bool Update(int id, Game updatedGame)
+    {
+        var games = GetAll();
+        var game = games.FirstOrDefault(g => g.Id == id);
         if (game == null) return false;
 
         game.Name = updatedGame.Name;
@@ -35,11 +45,11 @@ public class GameContext : IGameContext
     }
     public bool Delete(int id)
     {
-        var games GetAll();
-        var game games.FirstOrDefault(g => g.Id == id);
+        var games = GetAll();
+        var game = games.FirstOrDefault(g => g.Id == id);
         if (game == null) return false;
         games.Remove(game);
-        WriteToFile(game);
+        WriteToFile(games);
         return true;
     }
     private void WriteToFile(List<Game> games)
@@ -48,4 +58,6 @@ public class GameContext : IGameContext
         using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
         csv.WriteRecords(games);
     }
+
+
 }
