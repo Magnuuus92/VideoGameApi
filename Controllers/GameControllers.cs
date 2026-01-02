@@ -21,7 +21,7 @@ public class GameController : ControllerBase
             var games = _context.GetAll();
 
             if (!string.IsNullOrEmpty(name))
-                games = games.Where(g => g.Name.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
+                games = games.Where(g => g.Title.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
             return Ok(games);
         }
         catch (Exception ex)
@@ -44,7 +44,7 @@ public class GameController : ControllerBase
         try
         {
             _context.Add(game);
-            return CreatedAtAction(nameof(GetById), new { id = game.Id }, game);
+            return CreatedAtAction(nameof(GetById), new { id = game.GameID }, game);
         }
         catch (Exception ex)
         {

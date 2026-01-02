@@ -1,20 +1,31 @@
+
+using VideoGameApi;
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSingleton<IGameContext, GameContext>();
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+//builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
+builder.Services.AddSingleton<IGameContext, GameContext>();
 var app = builder.Build();
 
+app.UseSwagger();
+app.UseSwaggerUI();
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+/* if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-}
+    // app.MapOpenApi();
 
-app.UseHttpsRedirection();
+}*/
+app.UseAuthorization();
+app.MapControllers();
 
-var summaries = new[]
+//app.UseHttpsRedirection();
+app.Run();
+
+/*var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
@@ -33,10 +44,9 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
-app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
-
+*/

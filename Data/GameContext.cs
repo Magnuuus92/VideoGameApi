@@ -8,7 +8,7 @@ using VideoGameApi.Models;
 
 public class GameContext : IGameContext
 {
-    private readonly string _filepath = "data/Videoames.csv";
+    private readonly string _filepath = "Data/VideoGames.csv";
     public List<Game> GetAll()
     {
         using var reader = new StreamReader(_filepath);
@@ -17,24 +17,24 @@ public class GameContext : IGameContext
     }
     public Game? GetById(int id)
     {
-        return GetAll().FirstOrDefault(g => g.Id == id);
+        return GetAll().FirstOrDefault(g => g.GameID == id);
     }
     public void Add(Game game)
     {
         var games = GetAll();
-        game.Id = games.Max(g => g.Id) + 1;
+        game.GameID = games.Max(g => g.GameID) + 1;
         games.Add(game);
         WriteToFile(games);
     }
     public bool Update(int id, Game updatedGame)
     {
         var games = GetAll();
-        var game = games.FirstOrDefault(g => g.Id == id);
+        var game = games.FirstOrDefault(g => g.GameID == id);
         if (game == null) return false;
 
-        game.Name = updatedGame.Name;
+        game.Title = updatedGame.Title;
         game.Platform = updatedGame.Platform;
-        game.Year = updatedGame.Year;
+        game.ReleaseYear = updatedGame.ReleaseYear;
         game.Genre = updatedGame.Genre;
         game.Publisher = updatedGame.Publisher;
         game.GlobalSales = updatedGame.GlobalSales;
@@ -46,7 +46,7 @@ public class GameContext : IGameContext
     public bool Delete(int id)
     {
         var games = GetAll();
-        var game = games.FirstOrDefault(g => g.Id == id);
+        var game = games.FirstOrDefault(g => g.GameID == id);
         if (game == null) return false;
         games.Remove(game);
         WriteToFile(games);
