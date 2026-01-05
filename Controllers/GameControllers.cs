@@ -14,11 +14,11 @@ public class GameController : ControllerBase
         _logger = logger;
     }
     [HttpGet]
-    public IActionResult Get([FromQuery] string? name)
+    public async Task<IActionResult> Get([FromQuery] string? name)
     {
         try
         {
-            var games = _context.GetAll();
+            var games = await _context.GetAllAsync();
 
             if (!string.IsNullOrEmpty(name))
                 games = games.Where(g => g.Title.Contains(name, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -32,18 +32,18 @@ public class GameController : ControllerBase
         }
     }
     [HttpGet("{id}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var game = _context.GetById(id);
+        var game = await _context.GetByIdAsync(id);
         if (game == null) return NotFound();
         return Ok(game);
     }
     [HttpPost]
-    public IActionResult Create([FromBody] Game game)
+    public async Task<IActionResult> Create([FromBody] Game game)
     {
         try
         {
-            _context.Add(game);
+            await _context.AddAsync(game);
             return CreatedAtAction(nameof(GetById), new { id = game.GameID }, game);
         }
         catch (Exception ex)
@@ -53,16 +53,18 @@ public class GameController : ControllerBase
         }
     }
     [HttpPatch("{id}")]
-    public IActionResult Patch(int id, [FromBody] Game game)
+    public async Task<IActionResult> Patch(int id, [FromBody] Game game)
     {
-        if (!_context.Update(id, game))
+        var updated = await _context.UpdateAsync(id, game);
+        if (!updated)
             return NotFound();
         return NoContent();
     }
     [HttpDelete("{id}")]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
-        if (!_context.Delete(id))
+        var deleted = await _context.DeleteAsync(id);
+        if (!deleted)
             return NotFound();
         return NoContent();
     }

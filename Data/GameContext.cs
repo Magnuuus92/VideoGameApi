@@ -22,7 +22,7 @@ public class GameContext : IGameContext
     public void Add(Game game)
     {
         var games = GetAll();
-        game.GameID = games.Max(g => g.GameID) + 1;
+        game.GameID = games.Any() ? games.Max(g => g.GameID) + 1 : 1;
         games.Add(game);
         WriteToFile(games);
     }
@@ -57,6 +57,31 @@ public class GameContext : IGameContext
         using var writer = new StreamWriter(_filepath);
         using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
         csv.WriteRecords(games);
+    }
+
+    //ASYNC METODER
+    public Task<List<Game>> GetAllAsync()
+    {
+        return Task.FromResult(GetAll());
+    }
+    public Task<Game?> GetByIdAsync(int id)
+    {
+        return Task.FromResult(GetById(id));
+    }
+    public Task AddAsync(Game game)
+    {
+        Add(game);
+        return Task.CompletedTask;
+    }
+    public Task<bool> UpdateAsync(int id, Game updatedGame)
+    {
+        var result = Update(id, updatedGame);
+        return Task.FromResult(result);
+    }
+    public Task<bool> DeleteAsync(int id)
+    {
+        var result = Delete(id);
+        return Task.FromResult(result);
     }
 
 
